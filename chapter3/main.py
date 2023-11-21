@@ -1,12 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 
+from superlists.routes import router as superlists_router
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory='templates')
 
-
-@app.get('/')
-async def get_todos_page(request: Request):
-    return templates.TemplateResponse('todo.html', {'request': request})
+app.include_router(superlists_router)
