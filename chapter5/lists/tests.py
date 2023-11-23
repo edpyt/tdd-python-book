@@ -1,30 +1,34 @@
 import unittest
-import os
 
 import httpx
+
+from lists.depends import get_lists_templates
 
 
 class HomePageTest(unittest.TestCase):
     """Тест домашней страницы"""
-    HOME_PAGE_URL = 'http://localhost:8000'
-    CLIENT = httpx.Client(base_url=HOME_PAGE_URL)
-
-    def setUp(self) -> None:
-        self.response = self.CLIENT.get('/')
+    @classmethod
+    def setUpClass(cls):
+        cls.HOME_PAGE_URL = 'http://localhost:8000'
+        cls.CLIENT = httpx.Client(base_url=cls.HOME_PAGE_URL)
 
     @classmethod
     def tearDownClass(cls):
         cls.CLIENT.close()
+
+    def setUp(self) -> None:
+        self.response = self.CLIENT.get('/')
 
     def test_root_url_response(self) -> None:
         self.assertEqual(self.response.status_code, 200)
 
     def test_uses_home_template(self) -> None:
         html: str = self.response.text
-        expected_html = open(
-            f'{os.path.dirname(__file__)}/templates/home.html', 'r',
-            encoding='utf-8'
-        ).read().strip()
+
+        templates = get_lists_templates()
+
+        expected_html = templates.get_template('home.html').render()
+
         self.assertEqual(html, expected_html)
 
     def test_can_save_a_POST_request(self) -> None:
