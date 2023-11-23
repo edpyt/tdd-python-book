@@ -3,6 +3,7 @@ import unittest
 import httpx
 
 from lists.depends import get_lists_templates
+from lists.models import Item
 
 
 class HomePageTest(unittest.TestCase):
@@ -34,3 +35,22 @@ class HomePageTest(unittest.TestCase):
     def test_can_save_a_POST_request(self) -> None:
         response = self.CLIENT.post('/', data={'item_text': 'A new list item'})
         self.assertIn('A new list item', response.text)
+
+
+class ItemModelTest(unittest.TestCase):
+    def test_saving_and_retrieving_items(self):
+        first_item = Item()
+        first_item.text = 'The first (ever) list item'
+        first_item.save()
+
+        second_item = Item()
+        second_item.text = 'Item the second'
+        second_item.save()
+
+        saved_items = Item.all()
+        self.assertEqual(len(saved_items), 2)
+
+        first_saved_item = saved_items[0]
+        second_saved_item = saved_items[1]
+        self.assertEqual(first_saved_item.text, 'The first (ever) list item')
+        self.assertEqual(second_saved_item.text, 'Item the second')
