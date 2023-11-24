@@ -6,7 +6,6 @@ class Database(ABC):
     """
     Database context manager
     """
-
     def __init__(self, driver) -> None:
         self.driver = driver
 
@@ -25,18 +24,20 @@ class Database(ABC):
 
 
 class SqliteDatabase(Database):
-    def __init__(self) -> None:
+    def __init__(self, conn) -> None:
         self.driver = sqlite3
+        self._conn = conn
         super().__init__(self.driver)
 
     def connect_to_database(self):
-        return self.driver.connect('db.sqlite3')
+        return self._conn
 
 
-def create_table():
-    with SqliteDatabase() as db:
+def create_table(conn):
+    with SqliteDatabase(conn) as db:
         db.cursor.execute("""CREATE TABLE IF NOT EXISTS item (
-            id integer PRIMARY KEY
+            id integer PRIMARY KEY,
+            text TEXT
             );
         """)
         db.connection.commit()
