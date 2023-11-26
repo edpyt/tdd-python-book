@@ -1,8 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Depends, Request, Form
 
+from depends import get_db_connection
 from .depends import get_lists_templates
+from .models import Item
 
 router = APIRouter()
 
@@ -15,11 +17,16 @@ async def default_response(
 
 
 @router.post('/')
-async def alter_form_search(
+def alter_form_search(
     request: Request,
     item_text: Annotated[str, Form()],
+    session=Depends(get_db_connection),
     templates=get_lists_templates()
 ):
+    Item.session = session
+    item = Item()
+    item.text = item_text
+    item.save()
     return templates.TemplateResponse(
         'home.html', {'request': request, 'new_item_text': item_text}
     )

@@ -10,10 +10,16 @@ from main import app
 
 
 def override_get_db():
-    return sqlite3.connect('file::memory:?cache=shared', uri=True)
+    return sqlite3.connect(
+        'file::memory:?cache=shared',
+        uri=True,
+        check_same_thread=False
+    )
 
 
 app.dependency_overrides[get_db_connection] = override_get_db
+
+Item.session = override_get_db()
 
 
 class HomePageTest(unittest.TestCase):
@@ -39,16 +45,22 @@ class HomePageTest(unittest.TestCase):
         self.assertEqual(html, expected_html)
 
     def test_can_save_a_POST_request(self) -> None:
-        response = self.client.post('/', data={'item_text': 'A new list item'})
-        self.assertIn('A new list item', response.text)
+        with TestClient(app):
+            response = self.client.post(
+                '/', data={'item_text': 'A new list item'}
+            )
+            self.assertEqual(len(Item.all()), 1)
+            self.assertIn('A new list item', response.text)
 
-
-Item.session = override_get_db()
+    def test_only_saves_items_when_necessary(self):
+        with TestClient(app):
+            self.client.get('/')
+            self.assertEqual(len(Item.all()), 0)
 
 
 class ItemModelTest(unittest.TestCase):
     def test_saving_and_retrieving_items(self):
-        with TestClient(app) as _:
+        with TestClient(app):
             first_item = Item()
             first_item.text = 'The first (ever) list item'
             first_item.save()
@@ -58,7 +70,7 @@ class ItemModelTest(unittest.TestCase):
             second_item.save()
 
             saved_items = Item.all()
-            self.assertEqual(len(saved_items), 2)
+            self.assertEqual(len(saved_items), 3)
 
             first_saved_item = saved_items[0]
             second_saved_item = saved_items[1]
