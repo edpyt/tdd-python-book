@@ -16,7 +16,7 @@ async def default_response(
     return templates.TemplateResponse('home.html', {'request': request})
 
 
-@router.post('/')
+@router.post('/', status_code=302)
 def alter_form_search(
     request: Request,
     item_text: Annotated[str, Form()],

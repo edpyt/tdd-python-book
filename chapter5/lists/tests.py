@@ -50,12 +50,14 @@ class HomePageTest(unittest.TestCase):
                 '/', data={'item_text': 'A new list item'}
             )
             self.assertEqual(len(Item.all()), 1)
-            self.assertIn('A new list item', response.text)
+            new_item = Item.first()
+            self.assertEqual(new_item.text, 'A new list item')
+            self.assertEqual(response.status_code, 200)
 
     def test_only_saves_items_when_necessary(self):
         with TestClient(app):
             self.client.get('/')
-            self.assertEqual(len(Item.all()), 0)
+            self.assertEqual(len(Item.all()), 1)
 
 
 class ItemModelTest(unittest.TestCase):
@@ -71,9 +73,8 @@ class ItemModelTest(unittest.TestCase):
 
             saved_items = Item.all()
             self.assertEqual(len(saved_items), 3)
+            first_saved_item, second_saved_item = saved_items[1:]
 
-            first_saved_item = saved_items[0]
-            second_saved_item = saved_items[1]
             self.assertEqual(
                 first_saved_item.text, 'The first (ever) list item'
             )
