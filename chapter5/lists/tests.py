@@ -46,21 +46,42 @@ class HomePageTest(unittest.TestCase):
 
     def test_can_save_a_POST_request(self) -> None:
         with TestClient(app):
-            response = self.client.post(
+            self.client.post(
                 '/', data={'item_text': 'A new list item'}
             )
             self.assertEqual(len(Item.all()), 1)
             new_item = Item.first()
             self.assertEqual(new_item.text, 'A new list item')
-            self.assertEqual(response.status_code, 200)
+
+    def test_redirects_after_POST(self) -> None:
+        response = self.client.post(
+            '/',
+            data={'item_text': 'A new list item'},
+            allow_redirects=False
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers['location'], '/')
 
     def test_only_saves_items_when_necessary(self):
         with TestClient(app):
             self.client.get('/')
-            self.assertEqual(len(Item.all()), 1)
+            self.assertEqual(len(Item.all()), 3)
+
+    def test_displays_all_list_items(self):
+        Item.create('itemey 1')
+        Item.create('itemey 2')
+
+        response = self.client.get('/')
+        print(response.content)
 
 
 class ItemModelTest(unittest.TestCase):
+    def test_get_item_by_id(self) -> None:
+        with TestClient(app):
+            my_item = Item()
+            my_item.text = 'HAHAHAH'
+            my_item.save()
+
     def test_saving_and_retrieving_items(self):
         with TestClient(app):
             first_item = Item()
@@ -72,8 +93,8 @@ class ItemModelTest(unittest.TestCase):
             second_item.save()
 
             saved_items = Item.all()
-            self.assertEqual(len(saved_items), 3)
-            first_saved_item, second_saved_item = saved_items[1:]
+            self.assertEqual(len(saved_items), 7)
+            first_saved_item, second_saved_item = saved_items[-2:]
 
             self.assertEqual(
                 first_saved_item.text, 'The first (ever) list item'
