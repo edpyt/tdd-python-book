@@ -10,15 +10,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Item",
+            name='Item',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
             ],
