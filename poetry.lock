@@ -264,6 +264,19 @@ typing-extensions = ">=4.8.0"
 all = ["email-validator (>=2.0.0)", "httpx (>=0.23.0)", "itsdangerous (>=1.1.0)", "jinja2 (>=2.11.2)", "orjson (>=3.2.1)", "pydantic-extra-types (>=2.0.0)", "pydantic-settings (>=2.0.0)", "python-multipart (>=0.0.5)", "pyyaml (>=5.3.1)", "ujson (>=4.0.1,!=4.0.2,!=4.1.0,!=4.2.0,!=4.3.0,!=5.0.0,!=5.1.0)", "uvicorn[standard] (>=0.12.0)"]
 
 [[package]]
+name = "fastwsgi"
+version = "0.0.9"
+description = "An ultra fast WSGI server for Python 3"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "fastwsgi-0.0.9.tar.gz", hash = "sha256:17ef4c6dcccc2d0b9cf317a71b2ade544a742253511a0c87c0838d4f4fdfacd1"},
+]
+
+[package.dependencies]
+click = ">=7.0"
+
+[[package]]
 name = "flake8"
 version = "4.0.1"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -882,4 +895,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<=3.12"
-content-hash = "f8f9713b1ac2d111291e10b17b959076b6206fdcb3309e27327c9e4c6696bb8f"
+content-hash = "9ad30197be678396ca2f42bf3ed2754d2cbc3e34ed3dbf3ebfd36e91a0ede33c"

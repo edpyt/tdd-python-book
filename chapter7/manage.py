@@ -19,4 +19,10 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if 'fastwsgi' in sys.argv:
+        import fastwsgi
+
+        from superlists.wsgi import get_wsgi_application
+        fastwsgi.run(wsgi_app=get_wsgi_application(), host='0.0.0.0', port=8000)
+    else:
+        main()
