@@ -1,0 +1,31 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
+      - ../../static:/static
+
+  django:
+    image: pythonbook
+    build:
+      context: ../../
+      dockerfile: ./deploy/subdomain/django/Dockerfile
+    command: gunicorn superlists.wsgi:application -b 0.0.0.0:8000  
+    expose:
+      - 8000
+    volumes:
+      - ../../:/tdd.pythonbook.com
+  
+  migrations:
+    image: pythonbook
+    command: python manage.py migrate --noinput
+    volumes:
+      - ../../:/tdd.pythonbook.com
+  
+  static:
+    image: pythonbook
+    command: python manage.py collectstatic --clear --noinput
+    volumes:
+      - ../../:/tdd.pythonbook.com
