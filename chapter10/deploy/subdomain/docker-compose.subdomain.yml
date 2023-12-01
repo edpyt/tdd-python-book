@@ -6,17 +6,17 @@ services:
     volumes:
       - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
       - ../../static:/static
-      - gunicorn_socket:/tdd.pythonbook.com.socket
+      - gunicorn_socket:/gunicorn_socket
 
   django:
     image: pythonbook
     build:
       context: ../../
       dockerfile: ./deploy/subdomain/django/Dockerfile
-    command: gunicorn superlists.wsgi:application -b unix:/tmp/tdd.pythonbook.com.socket
+    command: gunicorn superlists.wsgi:application -b unix:/gunicorn_socket/tdd.pythonbook.com.socket
     volumes:
       - ../../:/tdd.pythonbook.com
-      - gunicorn_socket:/tdd.pythonbook.com.socket
+      - gunicorn_socket:/gunicorn_socket
 
   migrations:
     image: pythonbook
