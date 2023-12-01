@@ -16,6 +16,7 @@ python-multipart = "^0.0.6"
 blue = "^0.9.1"
 django = "^4.2.7"
 fastwsgi = "^0.0.9"
+gunicorn = "^21.2.0"
 
 
 [build-system]

@@ -6,18 +6,18 @@ services:
     volumes:
       - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
       - ../../static:/static
+      - gunicorn_socket:/tdd.pythonbook.com.socket
 
   django:
     image: pythonbook
     build:
       context: ../../
       dockerfile: ./deploy/subdomain/django/Dockerfile
-    command: gunicorn superlists.wsgi:application -b 0.0.0.0:8000  
-    expose:
-      - 8000
+    command: gunicorn superlists.wsgi:application -b unix:/tmp/tdd.pythonbook.com.socket
     volumes:
       - ../../:/tdd.pythonbook.com
-  
+      - gunicorn_socket:/tdd.pythonbook.com.socket
+
   migrations:
     image: pythonbook
     command: python manage.py migrate --noinput
@@ -29,3 +29,6 @@ services:
     command: python manage.py collectstatic --clear --noinput
     volumes:
       - ../../:/tdd.pythonbook.com
+
+volumes:
+  gunicorn_socket:
