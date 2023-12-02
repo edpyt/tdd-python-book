@@ -1,0 +1,34 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf
+      - ../../static:/static
+      - gunicorn_socket:/gunicorn_socket
+
+  django:
+    image: pythonbook
+    build:
+      context: ../../
+      dockerfile: ./deploy/subdomain/django/Dockerfile
+    command: gunicorn superlists.wsgi:application -b unix:/gunicorn_socket/tdd.pythonbook.com.socket
+    volumes:
+      - ../../:/tdd.pythonbook.com
+      - gunicorn_socket:/gunicorn_socket
+
+  migrations:
+    image: pythonbook
+    command: python manage.py migrate --noinput
+    volumes:
+      - ../../:/tdd.pythonbook.com
+  
+  static:
+    image: pythonbook
+    command: python manage.py collectstatic --clear --noinput
+    volumes:
+      - ../../:/tdd.pythonbook.com
+
+volumes:
+  gunicorn_socket:
