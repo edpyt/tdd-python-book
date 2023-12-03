@@ -9,7 +9,7 @@ SECRET_KEY = (
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['tdd.pythonbook.com']
+ALLOWED_HOSTS = ['localhost', 'tdd.pythonbook.com']
 
 INSTALLED_APPS = [
     # 'django.contrib.admin',
@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'lists',
 ]
 
