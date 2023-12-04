@@ -22,11 +22,11 @@
             var errElement = document.getElementsByClassName('has-error')[0];
             var inputEl = document.getElementsByName('text')[0];
         </script>
-        <script src="./lists.js"></script>
+        <script src="../lists.js"></script>
         <script>
             
             QUnit.test('errors should be hidden on keypress', (assert) => {
-                initialize()
+                window.SuperLists.initialize()
                 inputEl.dispatchEvent(new KeyboardEvent('keypress'))
                 assert.equal(
                     errElement.checkVisibility({checkOpacity: true, checkVisibilityCSS: true}),
@@ -35,7 +35,7 @@
                 })
 
             QUnit.test("errors aren't hidden if there is no keypress", (assert) => {
-                initialize()
+                window.SuperLists.initialize()
                 assert.equal(
                     errElement.checkVisibility({checkOpacity: true, checkVisibilityCSS: true}),
                     true

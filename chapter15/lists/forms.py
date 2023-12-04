@@ -42,3 +42,6 @@ class ExistingListItemForm(ItemForm):
             e.error_dict = {'text': [DUPLICATE_ITEM_ERROR]}
             self._update_errors(e)
         return super().validate_unique()
+
+    def save(self):
+        return super(forms.ModelForm, self).save()
