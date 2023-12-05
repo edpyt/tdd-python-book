@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  
+  <head>
+    <title>To-Do lists</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  
+  <body>
+    <div class="container">
+      
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Superlists</a>
+          <form class="navbar-form navbar-right" method="POST" action="#">
+            <span>Enter email to log in:</span>
+            <input class="form-control" name="email" type="text"/>
+            {% csrf_token %}
+          </form>
+        </div>
+      </nav>
+
+      <div class="row justify-content-center p-5 bg-body-tertiary rounded-3">
+        <div class="col-lg-6 text-center">
+          <h1 class="display-1 mb-4">{% block header_text %}{% endblock %}</h1>
+          
+          <form method="POST" action="{% block form_action %}{% endblock %}" >
+            {{ form.text }}
+            {% csrf_token %}
+            {% if form.errors %}
+            <div  class="form-group has-error">
+              <span class="help-block">{{ form.text.errors }}</span>
+            </div>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          {% block table %}
+          {% endblock %}
+        </div>
+      </div>
+
+    </div>
+
+    <script src="{% static 'lists.js' %}"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function(){
+        window.SuperLists.initialize();
+      })
+    </script>
+  </body>
+
+</html>
