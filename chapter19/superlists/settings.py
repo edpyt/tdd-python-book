@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -7,7 +8,7 @@ SECRET_KEY = (
     'django-insecure-*f-$(il)%0-%i450r=@hpwb2y^^31l#8&cvoj1iy%-b(fb38xn'
 )
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'tdd.pythonbook.com']
 
@@ -77,6 +78,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = [
+    'accounts.authentication.PasswordlessAuthenticationBackend'
+]
 
 LANGUAGE_CODE = 'en-us'
 
@@ -111,3 +115,10 @@ LOGGING = {
     },
     'root': {'level': 'INFO'},
 }
+
+# EMAIL
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

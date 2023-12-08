@@ -12,5 +12,7 @@ class User(models.Model):
 
 
 class Token(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, unique=True)
+    uid = models.CharField(
+        max_length=40, default=uuid.uuid4, unique=True
+    )
     email = models.EmailField()
