@@ -29,4 +29,4 @@ jobs:
     - name: Run Module Tests
       working-directory: ./${{ matrix.active-chapter }}
       run: |
-        poetry run python manage.py test lists account
+        poetry run python manage.py test lists accounts
