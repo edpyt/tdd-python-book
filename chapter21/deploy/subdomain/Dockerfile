@@ -14,3 +14,6 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY . /tdd.pythonbook.com
+
+COPY deploy/subdomain/gunicorn/command.sh /gunicorn.sh
+RUN chmod +x /gunicorn.sh

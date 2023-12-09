@@ -12,13 +12,14 @@ services:
     image: pythonbook
     build:
       context: ../../
-      dockerfile: ./deploy/subdomain/django/Dockerfile
-    command: gunicorn superlists.wsgi:application -b unix:/gunicorn_socket/tdd.pythonbook.com.socket
+      dockerfile: ./deploy/subdomain/Dockerfile
+    command: /bin/sh -c "/gunicorn.sh"
     volumes:
       - ../../:/tdd.pythonbook.com
       - gunicorn_socket:/gunicorn_socket
     env_file:
       - ../.env.prod
+    
 
   migrations:
     image: pythonbook
