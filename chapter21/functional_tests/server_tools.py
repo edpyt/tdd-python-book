@@ -1,17 +1,40 @@
-from fabric.api import run
-from fabric.context_managers import settings
+"""Works only with Docker"""
+import pathlib
+from typing import Any, Callable
 
-MANAGE_DOT_PY = '~/sites/{host}/virtualenv/bin/python ~/sites/{host}/source/manage.py'
+from python_on_whales import DockerClient
+
+DOCKER_DJANGO_CONTAINER_SERVICE = 'django'
+MANAGE_DOT_PY = 'python manage.py'
+
+COMPOSE_FILE = (
+    pathlib.Path(__file__).parent.parent.resolve() /
+    'deploy/subdomain/docker-compose.subdomain.yml'
+)
+
+def get_docker_client() -> DockerClient:
+    return DockerClient(compose_files=[COMPOSE_FILE])
 
 
-def reset_database(host:  str) -> None:
-    manage_dot_py = MANAGE_DOT_PY.format(host=host)
-    with settings(host_string=f'root@{host}'):
-        run(f'{manage_dot_py} flush --noinput')
+def docker_compose_execute(fn: Callable):
+    docker = get_docker_client()
+    
+    def run_command(*args, **kwargs) -> Any:
+        command: list[str] = fn(*args, **kwargs)
+        response = docker.compose.execute(
+            DOCKER_DJANGO_CONTAINER_SERVICE, command, tty=False
+        )
+        print(f'Execute command: {fn.__name__}')
+        return response
+    return run_command
 
 
-def create_session_on_server(host: str, email: str) -> str:
-    manage_dot_py = MANAGE_DOT_PY.format(host=host)
-    with settings(host_string=f'root@{host}'):
-        session_key = run(f'{manage_dot_py} create_session {email}')
-        return session_key.strip()
+@docker_compose_execute
+def reset_database() -> list[str]:
+    return MANAGE_DOT_PY.split() + ['flush', '--noinput']
+
+
+@docker_compose_execute
+def create_session_on_server(email: str) -> list[str]:
+    return MANAGE_DOT_PY.split() + ['create_session', email]
+    
