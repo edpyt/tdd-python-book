@@ -2,7 +2,7 @@ import time
 from django.shortcuts import redirect, render
 
 from accounts.models import User
-from lists.forms import ExistingListItemForm, ItemForm
+from lists.forms import ExistingListItemForm, ItemForm, NewListForm
 from lists.models import List
 
 
@@ -24,18 +24,11 @@ def view_list(request, list_id):
 
 
 def new_list(request):
-    form = ItemForm(data=request.POST)
-    if form.is_valid():    
-        list_ = List()
-        list_.save()
-        list_.owner = request.user
-        form.save(for_list=list_)
-        return redirect(str(list_.get_absolute_url()))
+    form = NewListForm(data=request.POST)
+    if form.is_valid():
+        list_ = form.save(owner=request.user)
+        return redirect(list_)
     return render(request, 'home.html', {'form': form})
-
-
-def new_list2(request):
-    ...
 
 
 def my_lists(request, email: str):
