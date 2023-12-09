@@ -79,7 +79,7 @@ class LoginTest(FunctionalTest):
                     print('getting msg', i)
                     _, lines, __ = inbox.retr(i)
                     lines = [l.decode('utf8') for l in lines]
-                    if any(subject in param for param in lines):
+                    if any(subject.lower() in param.lower() for param in lines):
                         email_id = i
                         body = '\n'.join(lines)
                         return body
