@@ -31,4 +31,3 @@ class LayoutAndStylingTest(FunctionalTest):
             270,
             delta=10,
         )
-        self.fail()
