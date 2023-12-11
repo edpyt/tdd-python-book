@@ -1,4 +1,3 @@
-import os
 import re
 import poplib
 import time
@@ -10,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from .base import FunctionalTest
+from .list_page import ListPage
 
 SUBJECT = 'Your login link for Superlists'
 
@@ -25,14 +25,18 @@ class LoginTest(FunctionalTest):
 
     def test_can_get_email_link_to_log_in(self):
         self.browser.get(self.live_server_url)
-        self.browser.find_element(By.NAME, 'email').send_keys(self.TEST_EMAIL)
-        self.browser.find_element(By.NAME, 'email').send_keys(Keys.ENTER)
 
-        self.wait_for(
+        web_element_email = self.browser.find_element(
+            By.NAME, 'email'
+        )
+
+        list_page = ListPage(self).send_keys_and_wait_for(
+            [self.TEST_EMAIL, Keys.ENTER],
             lambda: self.assertIn(
                 'Проверьте свою почту',
                 self.browser.find_element(By.TAG_NAME, 'body').text
-            )
+            ),
+            web_element=web_element_email
         )
 
         body = self.wait_for_email(self.TEST_EMAIL, SUBJECT)
