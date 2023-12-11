@@ -1,4 +1,19 @@
 services:
+  jenkins:
+    # image: jenkins/jenkins:lts
+    build:
+      context: ../jenkins
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    networks:
+      - cicd_network
+
   nginx:
     image: nginx:latest
     ports:
@@ -12,26 +27,36 @@ services:
     image: pythonbook
     build:
       context: ../../
-      dockerfile: ./deploy/subdomain/Dockerfile
+      dockerfile: ./deploy/subdomain/django/Dockerfile
     command: /bin/sh -c "/gunicorn.sh"
     volumes:
       - ../../:/tdd.pythonbook.com
       - gunicorn_socket:/gunicorn_socket
     env_file:
       - ../.env.prod
-    
 
   migrations:
     image: pythonbook
     command: python manage.py migrate --noinput
     volumes:
       - ../../:/tdd.pythonbook.com
+    depends_on:
+      django:
+        condition: service_completed_successfully
   
   static:
     image: pythonbook
     command: python manage.py collectstatic --clear --noinput
     volumes:
       - ../../:/tdd.pythonbook.com
+    depends_on:
+      django:
+        condition: service_completed_successfully
 
 volumes:
   gunicorn_socket:
+  jenkins_home:
+
+networks:
+  cicd_network:
+    driver: bridge
