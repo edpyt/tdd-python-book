@@ -102,3 +102,6 @@ class ListPage:
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table(item_text)
         return self
+    
+    def get_list_owner(self):
+        return self.test.browser.find_element(By.ID, 'id_list_owner').text
