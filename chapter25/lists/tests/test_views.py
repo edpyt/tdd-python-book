@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 
 from django.http import HttpRequest
 from django.test import TestCase
+from django.urls import reverse
 from django.utils.html import escape
 
 from accounts.models import User
@@ -203,3 +204,45 @@ class NewListViewUnitTests(unittest.TestCase):
         mock_form.is_valid.return_value = False
         new_list(self.request)
         self.assertFalse(mock_form.save.called)
+
+
+class ShareListTest(TestCase):
+    def test_post_redirects_to_lists_page(self):
+        """Тест POST запрос переадресуется на главную страницу"""
+
+        mylist = List.objects.create()
+        share_list_url = reverse('share_list', kwargs={'list_id': mylist.id})
+
+        response = self.client.post(share_list_url)
+
+        self.assertRedirects(response, '/')
+    
+    def test_post_redirects_to_lists_page_with_list_owner(self):
+        """
+        Тест POST запрос с владельцем списка переадресует на страницу списка
+        """
+        owner = User.objects.create(email='hello@world.eu')
+        mylist = List.objects.create(owner=owner)
+        reverse_url = reverse('share_list', kwargs={'list_id': mylist.id})
+
+        self.client.force_login(owner)
+        response = self.client.post(reverse_url)
+
+        self.assertRedirects(response, f'/lists/{mylist.id}/')
+
+    def test_post_with_email_append_other_user_to_list(self):
+        """
+        Тест POST запрос с email добавляет этого пользователя в список
+        """
+        owner = User.objects.create(email='email@world.ru')
+        list_ = List.objects.create(owner=owner)
+
+        guest = User.objects.create(email='hello@world.eu')
+
+        self.client.force_login(owner)
+        self.client.post(
+            reverse('share_list', kwargs={'list_id': list_.id}),
+            {'sharee': guest.email}
+        )
+    
+        self.assertIn(guest, list_.shared_with.all())

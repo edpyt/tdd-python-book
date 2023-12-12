@@ -6,7 +6,11 @@
 
 {% block extra_content %}
     <h2>{{ owner.email }}'s lists</h2>
-    <ul>
+    <ul id="lists">
+        {% for list in owner.shared_with.all %}
+        <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
+        {% endfor %}
+        
         {% for list in owner.list_set.all %}
         <li><a href="{{ list.get_absolute_url }}">{{ list.name }}</a></li>
         {% endfor %}

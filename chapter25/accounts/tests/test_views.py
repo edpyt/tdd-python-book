@@ -1,6 +1,6 @@
 from unittest.mock import call, patch
-from django.conf import settings
 
+from django.conf import settings
 from django.test import TestCase
 
 import accounts.views

@@ -1,3 +1,4 @@
+import time
 from typing import Callable, Optional, Sequence
 
 from selenium.webdriver.remote.webelement import WebElement
@@ -48,14 +49,24 @@ class ListPage:
         return self
 
     def get_share_box(self):
-        return self.test.browser.find_element(
-            By.CSS_SELECTOR, 'input[name="sharee"]'
+        return self.test.wait_for(
+            lambda: self.test.browser.find_element(
+                By.NAME, 'sharee'
+            )
         )
     
+    def wait_for_check_email_in_list_share(self, email: str):
+        self.test.wait_for(
+            lambda: self.test.assertIn(
+                email,
+                [item.text for item in self.get_shared_with_list()]
+            )
+        )
+
     def get_shared_with_list(self):
         return self.test.browser.find_element(
             By.CSS_SELECTOR, '.list-sharee'
-        )
+        ).find_elements(By.TAG_NAME, 'li')
     
     def send_keys_and_wait_for(
         self,
@@ -90,11 +101,7 @@ class ListPage:
     def share_list_with(self, email):
         self.get_share_box().send_keys(email)
         self.get_share_box().send_keys(Keys.ENTER)
-        self.test.wait_for(
-            lambda: self.test.assertIn(
-                email, [item.text for item in self.get_shared_with_list()]
-            )
-        )
+
     
     def start_a_new_list(self, item_text):
         inputbox = self.get_item_input_box()
@@ -102,3 +109,6 @@ class ListPage:
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table(item_text)
         return self
+    
+    def get_list_owner(self):
+        return self.test.browser.find_element(By.ID, 'id_list_owner').text

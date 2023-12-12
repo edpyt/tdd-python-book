@@ -7,7 +7,35 @@
 {% block table %}
   <table class="table" id="id_list_table">
     {% for item in list.item_set.all %}
-      <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
+    <tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
     {% endfor %}
   </table>
+  <div class="row">
+    <div class="col-md-6">
+      {% if list.owner == user %}
+      <p>
+        <h3>Список предоставлен в общее пользование для:</h3>
+      </p>
+      <ul class="list-sharee">
+        {% for user in list.shared_with.all %}
+        <li>{{ user.email }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>
+        <h3>Владелец списка: <span id="id_list_owner">{{ list.owner.email }}</span></h3>
+      </p>
+      {% endif %}
+    </div>
+    <form class="col-md-6" method="POST" action="{% url 'share_list' list_id=list.id %}">
+      {% csrf_token %}
+      <p>
+        <h3>
+          Поделиться этим списком
+        </h3>
+      </p>
+      <input name="sharee" placeholder="your@friend-email.com" class="form-control"/>
+    </form>
+
+  </div>
 {% endblock %}

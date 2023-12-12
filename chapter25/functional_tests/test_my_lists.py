@@ -1,11 +1,10 @@
-from django.conf import settings
-from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY, get_user_model
-from django.contrib.sessions.backends.db import SessionStore
+import time
+from django.contrib.auth import get_user_model
 from selenium.webdriver.common.by import By
-
 
 from .base import FunctionalTest
 from .list_page import ListPage
+from .my_lists_page import MyListsPage
 
 User = get_user_model()
 
@@ -52,3 +51,11 @@ class MyListsTest(FunctionalTest):
                 []
             )
         )
+
+    def test_list_owner_and_usage_permission(self):
+        self.create_pre_authenticated_session('test@mail.com')
+
+        self.browser.get(self.live_server_url)
+        self.add_list_item('Hello')
+
+        time.sleep(10)

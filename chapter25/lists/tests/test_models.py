@@ -88,3 +88,16 @@ class ListAndItemModelsTest(TestCase):
         Item.objects.create(list=list_, text='first item')
         Item.objects.create(list=list_, text='second item')
         self.assertEqual(list_.name, 'first item')
+
+    def test_list_has_shared_with_attribute(self):
+        """Тест `List` объект имеет атрибут `shared_with`"""
+        list_ = List.objects.create()
+        user = User.objects.create(email='a@b.com')
+
+        self.assertTrue(hasattr(list_, 'shared_with'))
+        self.assertTrue(hasattr(list_.shared_with, 'add'))
+        
+        list_.shared_with.add('a@b.com')
+
+        self.assertIn({'email': 'a@b.com'}, list_.shared_with.values('email'))
+    
