@@ -1,0 +1,29 @@
+- hosts: localhost
+  tasks:
+  # - name: Create compose file
+  #   ansible.builtin.template:
+  #     src: ../deploy/subdomain/docker-compose.subdomain.yml
+  #     dest: /home/edpyt/docker-compose.yml
+  #     owner: edpyt
+  #     group: docker
+  #     mode: "0644"
+
+  - name: Validate compose file
+    ansible.builtin.command:
+      cmd: docker-compose -f 'deploy/subdomain/docker-compose.subdomain.yml' config --quiet
+      chdir: /home/edpyt/TDD-Python-book/applicationC
+    changed_when: false
+
+  # - name: Pull container images
+  #   ansible.builtin.command:
+  #     cmd: docker-compose --ansi never --progress plain -f 'deploy/subdomain/docker-compose.subdomain.yml' pull
+  #     chdir: /home/edpyt/TDD-Python-book/applicationC
+  #   register: temp_close_pull
+  #   changed_when: "'Downloading' in temp_compose_pull.stdout"
+
+  - name: Start containers
+    ansible.builtin.command:
+      cmd: docker-compose --file 'deploy/subdomain/docker-compose.subdomain.yml' up --build
+      chdir: /home/edpyt/TDD-Python-book/applicationC
+    register: temp_compose_up
+    changed_when:  "'Started' in temp_compose_up.stdout"

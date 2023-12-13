@@ -1,0 +1,8 @@
+[live]
+pythonbook.com ansible_become=yes
+
+[staging]
+tdd.pythonbook.com ansible_become=yes
+
+[local]
+localhost asnsible_host=127.0.0.1
